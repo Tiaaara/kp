@@ -1,6 +1,5 @@
 <template>
   <div>
-  
     <Navbar />
 
     <!-- Video Section -->
@@ -8,11 +7,17 @@
 
     <!-- Profile Section -->
     <ProfileSection />
-<Berita
-:mainNews="mainNews" 
-:newsCards="newsCards"/>
+    
+    <!-- Berita Section -->
+    <Berita
+      :mainNews="mainNews"
+      :newsCards="newsCards"
+    />
+
+    <!-- Popup Section -->
+    <Popup v-if="showPopup" :popup="popup" />
+
     <!-- Visitor Section -->
- 
     <Layanan/>
     <VideoGallery/>
     <Visitor
@@ -21,8 +26,8 @@
       :monthlyVisitorCount="monthlyVisitorCount"
       :yearlyVisitorCount="yearlyVisitorCount"
     />
-  <Footer/>
-  <Popup v-if="showPopup" @closePopup="showPopup = false" />
+    
+    <Footer/>
   </div>
 </template>
 
@@ -35,8 +40,8 @@ import Footer from "@/Components/Footer.vue";
 import Berita from "@/Components/Berita.vue";
 import Layanan from "@/Components/Layanan.vue";
 import VideoGallery from "@/Components/VideoGallery.vue";
-import videoSource from '/Users/apple/Documents/KerjaPraktik/pemkab/public/vid/VideoBeranda.mp4';
 import Popup from "@/Components/Popup.vue";
+import videoSource from '/Users/apple/Documents/KerjaPraktik/pemkab/public/vid/VideoBeranda.mp4';
 
 export default {
   components: {
@@ -57,10 +62,12 @@ export default {
     yearlyVisitorCount: Number,
     mainNews: Object,
     newsCards: Array,
+    popup: Object,
   },
   data() {
     return {
       videoSource,
+      showPopup: true, // Default to true if you want it to show on initial load
     };
   },
 };

@@ -125,23 +125,7 @@ class NewsController extends Controller
     {
         return Inertia::render('Admin/News/Create');
     }
-    public function uploadImage(Request $request)
-    {
-        // Validasi gambar
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        // Simpan gambar ke storage
-        $image = $request->file('image');
-        $imagePath = $image->store('images', 'public'); // Simpan ke storage/app/public/images
-
-        // Kembalikan URL gambar yang disimpan
-        return response()->json([
-            'url' => asset('storage/' . $imagePath), // URL yang dinamis sesuai dengan domain aplikasi
-        ]);
-        
-    }
+   
 
     public function store(Request $request)
     {
@@ -228,7 +212,23 @@ class NewsController extends Controller
         return redirect()->route('news.index')->with('success', 'News created successfully!');
     }
     
-    
+    public function uploadImage(Request $request)
+    {
+        // Validasi gambar
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Simpan gambar ke storage
+        $image = $request->file('image');
+        $imagePath = $image->store('images', 'public'); // Simpan ke storage/app/public/images
+
+        // Kembalikan URL gambar yang disimpan
+        return response()->json([
+            'url' => asset('storage/' . $imagePath), // URL yang dinamis sesuai dengan domain aplikasi
+        ]);
+        
+    } 
     public function show($id)
     {
         $news = News::findOrFail($id);

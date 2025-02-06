@@ -1,72 +1,73 @@
-<template>
- <div>
-            <button @click="showPopup = true" class="btn-popup">Show Popup</button>
+<script setup>
+import { ref, computed } from 'vue';
 
-            <!-- Popup Modal -->
-            <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <div class="bg-white p-6 rounded-xl shadow-xl relative max-w-lg w-full">
-                    <button @click="closePopup" class="absolute top-2 right-2 bg-gray-200 p-2 rounded-full">&times;</button>
-                    <h2 class="text-xl font-bold mb-4">Selamat Datang!</h2>
-                    <p class="mb-4">Ini adalah popup yang muncul saat halaman beranda terbuka.</p>
-                    <div class="relative">
-                        <button @click="prevImage" class="absolute left-0 bg-gray-300 p-2 rounded-full">&#9664;</button>
-                        <img :src="popups[currentIndex].image_url" alt="Popup Image" class="w-full h-auto rounded" />
-                        <button @click="nextImage" class="absolute right-0 bg-gray-300 p-2 rounded-full">&#9654;</button>
-                    </div>
-                    <button @click="closePopup" class="bg-red-500 text-white px-4 py-2 rounded mt-4">Tutup</button>
-                </div>
-            </div>
-        </div>
-    `
-</template>
+const props = defineProps({
+    popup: Object, // Data popup dari parent
+});
 
-<script>
-import { ref, onMounted } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+// Konversi string image_popup menjadi array
+const images = computed(() => {
+    return props.popup?.image_popup ? props.popup.image_popup.split(',') : [];
+});
 
-export default {
-    setup() {
-        const page = usePage();
-        const popups = ref(page.props.popups);
-        const showPopup = ref(false);
-        const currentIndex = ref(0);
+const showPopup = ref(true);
+const currentIndex = ref(0);
 
-        onMounted(() => {
-            if (popups.value.length > 0) {
-                showPopup.value = true;
-            }
-        });
+// Fungsi untuk slide ke gambar berikutnya
+const nextImage = () => {
+    currentIndex.value = (currentIndex.value + 1) % images.value.length;
+};
 
-        const closePopup = () => {
-            showPopup.value = false;
-        };
-
-        const nextImage = () => {
-            currentIndex.value = (currentIndex.value + 1) % popups.value.length;
-        };
-
-        const prevImage = () => {
-            currentIndex.value = (currentIndex.value - 1 + popups.value.length) % popups.value.length;
-        };
-
-        return {
-            popups,
-            showPopup,
-            closePopup,
-            currentIndex,
-            nextImage,
-            prevImage
-        };
-    },}
+// Fungsi untuk slide ke gambar sebelumnya
+const prevImage = () => {
+    currentIndex.value = (currentIndex.value - 1 + images.value.length) % images.value.length;
+};
 </script>
 
+<template>
+    <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white p-4 rounded-lg shadow-lg relative w-96 z-50">
+            <!-- Tombol Close -->
+            <button @click="showPopup = false" class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded">
+                X
+            </button>
+            
+            <!-- Slide Show Gambar -->
+            <div class="relative">
+                <img 
+                    v-if="images.length > 0" 
+                    :src="`/storage/${images[currentIndex]}`" 
+                    alt="Popup Image" 
+                    class="w-full h-auto rounded transition-all duration-500 ease-in-out"
+                >
+                <p v-else class="text-center text-gray-500">Tidak ada gambar</p>
+
+                <!-- Tombol Navigasi (Hanya tampil jika lebih dari 1 gambar) -->
+                <button 
+                    v-show="images.length > 1" 
+                    @click="prevImage" 
+                    class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black text-white p-2 rounded-l"
+                >
+                    &lt;
+                </button>
+                <button 
+                    v-show="images.length > 1" 
+                    @click="nextImage" 
+                    class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black text-white p-2 rounded-r"
+                >
+                    &gt;
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
 <style scoped>
-.btn-popup {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
+button {
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
 }
 </style>

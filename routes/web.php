@@ -18,12 +18,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LambangController;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\DocumentController;
-
 use App\Http\Controllers\PopupController;
 
-Route::get('/popups', [PopupController::class, 'index'])->name('popups.index');
-Route::post('/popups', [PopupController::class, 'store'])->name('popups.store');
 
+Route::get('/popup', [PopupController::class, 'index'])->name('popup.index');
+Route::post('/popup', [PopupController::class, 'store'])->name('popup.store');
+Route::put('/popup/{id}', [PopupController::class, 'update'])->name('popup.update');
+Route::delete('/popup/{id}', [PopupController::class, 'destroy'])->name('popup.destroy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
